@@ -1,0 +1,3 @@
+[submodule "ps4-ksdk"]
+	path = ps4-ksdk
+	url = https://github.com/xemio/ps4-ksdk.git
