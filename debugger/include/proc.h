@@ -5,7 +5,7 @@
 #ifndef _PROC_H
 #define _PROC_H
 
-#include <ps4.h>
+#include "ps4.h"
 #include <stdbool.h>
 #include "protocol.h"
 #include "net.h"
