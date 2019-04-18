@@ -26,40 +26,42 @@ void patch_kernel() {
 
     uint64_t kernbase = get_kbase();
 
-    // patch memcpy first
-    *(uint8_t *)(kernbase + 0x1EA53D) = 0xEB;
+    // patch memcpy first, 4.55
+    *(uint8_t *)(kernbase + 0x14A6BD) = 0xEB;
 
-    // patch sceSblACMgrIsAllowedSystemLevelDebugging
-    memcpy((void *)(kernbase + 0x11730), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
+    // patch sceSblACMgrIsAllowedSystemLevelDebugging, 4.55
+    //memcpy((void *)(kernbase + 0x16A530), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
+	*(uint8_t*)(kernbase + 0x36057B) = 0; // taken from jkpatch
 
-    // patch sceSblACMgrHasMmapSelfCapability
-    memcpy((void *)(kernbase + 0x117B0), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
+    // patch sceSblACMgrHasMmapSelfCapability, 4.55
+    memcpy((void *)(kernbase + 0x16A5B0), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
 
-    // patch sceSblACMgrIsAllowedToMmapSelf
-    memcpy((void *)(kernbase + 0x117C0), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
+    // patch sceSblACMgrIsAllowedToMmapSelf, 4.55
+    memcpy((void *)(kernbase + 0x16A5C0), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
 
     // disable sysdump_perform_dump_on_fatal_trap
-    // will continue execution and give more information on crash, such as rip
-    *(uint8_t *)(kernbase + 0x7673E0) = 0xC3;
+    // will continue execution and give more information on crash, such as rip, 4.55
+    *(uint8_t *)(kernbase + 0x736250) = 0xC3;
 
-    // self patches
-    memcpy((void *)(kernbase + 0x13F03F), "\x31\xC0\x90\x90\x90", 5);
+    // self patches, 4.55
+    memcpy((void *)(kernbase + 0x143BE4), "\x31\xC0\x90\x90\x90\x90\x90\x90", 8);
 
-    // patch vm_map_protect check
-    memcpy((void *)(kernbase + 0x1A3C08), "\x90\x90\x90\x90\x90\x90", 6);
+    // patch vm_map_protect check, 4.55
+    memcpy((void *)(kernbase + 0x396A58), "\x90\x90\x90\x90\x90\x90", 6);
 
     // patch ptrace, thanks 2much4u
-    *(uint8_t *)(kernbase + 0x30D9AA) = 0xEB;
+    //*(uint8_t *)(kernbase + 0x17D2C1) = 0xEB;
+	memcpy((void*)(kernbase + 0x17D2EE), "\x90\x90\x90\x90\x90\x90", 6); // taken from mira
 
-    // remove all these bullshit checks from ptrace, by golden
-    memcpy((void *)(kernbase + 0x30DE01), "\xE9\xD0\x00\x00\x00", 5);
+    // remove all these bullshit checks from ptrace, by golden, 4.55
+    //memcpy((void *)(kernbase + 0x17D636), "\xE9\x15\x01\x00\x00", 5);
 
-    // patch ASLR, thanks 2much4u
-    *(uint16_t *)(kernbase + 0x194875) = 0x9090;
+    // patch ASLR, thanks 2much4u, 4.55
+    *(uint16_t *)(kernbase + 0x1BA559) = 0x9090;
 
-    // patch kmem_alloc
-    *(uint8_t *)(kernbase + 0xFCD48) = VM_PROT_ALL;
-    *(uint8_t *)(kernbase + 0xFCD56) = VM_PROT_ALL;
+    // patch kmem_alloc, 4.55
+    *(uint8_t *)(kernbase + 0x16ED8C) = VM_PROT_ALL;
+    *(uint8_t *)(kernbase + 0x16EDA2) = VM_PROT_ALL;
 
     cpu_enable_wp();
 }
