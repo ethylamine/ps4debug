@@ -31,7 +31,7 @@ void patch_kernel() {
 
     // patch sceSblACMgrIsAllowedSystemLevelDebugging, 4.55
     //memcpy((void *)(kernbase + 0x16A530), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
-	*(uint8_t*)(kernbase + 0x36057B) = 0; // taken from jkpatch
+    memcpy((void *)(kernbase + 0x16A530), "\x31\xC0\x40\xC3", 4);
 
     // patch sceSblACMgrHasMmapSelfCapability, 4.55
     memcpy((void *)(kernbase + 0x16A5B0), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", 8);
@@ -51,10 +51,13 @@ void patch_kernel() {
 
     // patch ptrace, thanks 2much4u
     //*(uint8_t *)(kernbase + 0x17D2C1) = 0xEB;
-	memcpy((void*)(kernbase + 0x17D2EE), "\x90\x90\x90\x90\x90\x90", 6); // taken from mira
+    memcpy((void*)(kernbase + 0x17D2EE), "\x90\x90\x90\x90\x90\x90", 6); // taken from mira
 
     // remove all these bullshit checks from ptrace, by golden, 4.55
-    //memcpy((void *)(kernbase + 0x17D636), "\xE9\x15\x01\x00\x00", 5);
+    memcpy((void *)(kernbase + 0x17D636), "\xE9\x15\x01\x00\x00", 5);
+
+    // extra patch for ptrace, by chendochap, 4.55
+    memcpy((void *)(kernbase + 0x17D753), "\x90\x90\x90", 3);
 
     // patch ASLR, thanks 2much4u, 4.55
     *(uint16_t *)(kernbase + 0x1BA559) = 0x9090;
